@@ -128,16 +128,15 @@ function drawOptionList(options,secondary,selectable) --Secondary = second/optio
 	
 end
 
-function openTextFeild (yValue)
-	gpu.setBackground(userFile["hiBgColor"])
-	gpu.fill(1,yValue,gpuMaxResX,3," ")
-	gpu.setBackground(userFile["defBgColor"])
-	gpu.fill(1,yValue + 1,gpuMaxResX,1," ")
-	term.setCursor(1,yValue+1)
-	output = io.read()
-	drawHomescreen()
-	return output
-end
+--function openTextFeild (yValue)
+--	gpu.setBackground(userFile["hiBgColor"])
+--	gpu.fill(1,yValue,gpuMaxResX,3," ")
+--	gpu.setBackground(userFile["defBgColor"])
+--	gpu.fill(1,yValue + 1,gpuMaxResX,1," ")
+--	term.setCursor(1,yValue+1)
+--	output = io.read()
+--	return output
+--end
 
 
 function drawFileView(path)
@@ -207,16 +206,21 @@ while true do --Main Loop
 			else --Main Screen
 			
 				if mode == "file_explorer" then
+				
 					dirList = {}
 					dirList = tableFileList(currentPath)
 					col = math.floor(action[3]/16)
 					row = action[4] - 1
 					i = (maxOnScreenFilesColumbs * (row - 1))+col
 					if dirList[i] then --Check if it exists or not
+					
 						if fs.isDirectory(dirList[i]) then
-							currentPath = currentPath .. dirList[i]
+						
+							currentPath = (currentPath .. dirList[i])
 							drawFileView(currentPath)
+							
 						else
+						
 							--Select and display options
 							gpu.setBackground(userFile["selBgColor"])
 							gpu.set((col * 16)+5,row + 1, dirList[i])
@@ -232,17 +236,17 @@ while true do --Main Loop
 								drawDefaultScreen()
 							end
 							
-							if op == "Rename" then
-								ans = openTextFeild(action[4] + 1)
-								shell.execute("mv " .. currentPath .. dirList[i] .. " " .. currentPath .. ask)
-								drawDefaultScreen()
-							end
+							--if op == "Rename" then
+							--	ans = openTextFeild(action[4] + 1)
+							--	shell.execute("mv " .. currentPath .. dirList[i] .. " " .. currentPath .. ask)
+							--	drawHomescreen()
+							--end
 							
-							if op == "Move to" then
-								ans = openTextFeild(action[4] + 1)
-								shell.execute("mv " .. currentPath .. dirList[i] .. " " .. ask)
-								drawDefaultScreen()
-							end
+							--if op == "Move to" then
+							--	ans = openTextFeild(action[4] + 1)
+							--	shell.execute("mv " .. currentPath .. dirList[i] .. " " .. ask)
+							--	drawDefaultScreen()
+							--end
 							
 							if op == "Delete" then
 								ask = drawOptionList({["title"]="Are you sure?",[1]="Yes",[2]="No"},true,true) --Confirmation
@@ -256,10 +260,12 @@ while true do --Main Loop
 								drawFileView(currentPath)
 							end
 							
-						end
-					end
-				end
-			end
+							
+							
+						end --Is Directory or not
+					end --If its in the file
+				end --File Explorer mode
+			end --Options panel
 		end --Touch event
 	else --Action Check
 		drawDefaultScreen() --Fix graphics artifacts if theres an issue
